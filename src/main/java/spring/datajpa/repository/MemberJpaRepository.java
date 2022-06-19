@@ -44,4 +44,13 @@ public class MemberJpaRepository {
     public Member find(Long id) {
         return em.find(Member.class, id);
     }
+
+    // 회원의 이름과 나이를 기준으로 만듦
+    public List<Member> findByUsernameAndAgeGreaterThen(String usernaem, int age) {
+        return em.createQuery("select m from Member m where m.username = :username and m.age > :age")
+                .setParameter("username", usernaem)
+                .setParameter("age", age)
+                .getResultList();
+
+    }
 }
