@@ -53,4 +53,29 @@ public class MemberJpaRepository {
                 .getResultList();
 
     }
+
+    // 페이징
+    public List<Member> findByPaging(int age, int offset, int limit) {
+        return em.createQuery("select m from Member m where m.age = :age order by m.username desc")
+                .setParameter("age", age)
+                .setFirstResult(offset) //어디서부터 가져올지
+                .setMaxResults(limit) // 몇 개를 가져올지
+                .getResultList();
+
+    }
+
+    // 전체 수 받아오는 카운트
+    public long totalCount(int age) {
+        return em.createQuery("select count(m) from Member m where m.age = :age", Long.class)
+                .setParameter("age", age)
+                .getSingleResult();
+    }
+
+    // 벌크성 수정: 전체 회원의 나이를 하나 증가시키는 예제
+    public int bulkAgePlus(int age) {
+        return em.createQuery("update Member m set m.age = m.age + 1" +
+                        " where m.age >= :age")
+                .setParameter("age", age)
+                .executeUpdate(); // 응답 값의 개수가 나온다
+    }
 }
