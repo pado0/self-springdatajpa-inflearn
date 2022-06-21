@@ -1,9 +1,12 @@
 package spring.datajpa.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import spring.datajpa.dto.MemberDto;
 import spring.datajpa.entity.Member;
 import spring.datajpa.repository.MemberRepository;
 
@@ -32,8 +35,20 @@ public class MemberController {
         return member.getUsername();
     }
 
-    @PostConstruct
+    @GetMapping("/members")
+    public Page<MemberDto> list(Pageable pageable){ //page: 결과정보, pageable: 파라미터 정보
+        Page<Member> page = memberRepository.findAll(pageable);
+        Page<MemberDto> map = page.map(MemberDto::new);
+        return map;
+    }
+
+    //@PostConstruct // 스프링 앱이 올라올 때 실행됨
     public void init(){
         memberRepository.save(new Member("userA"));
+        for (int i = 0; i < 100; i++) {
+            memberRepository.save(new Member("user" + i, i));
+        }
     }
+
+
 }
